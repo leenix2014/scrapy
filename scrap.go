@@ -3,11 +3,21 @@ package main
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/go-xorm/xorm"
 	"log"
 	"net/http"
 	"net/url"
+	"scrapy/entity"
 	"strings"
 )
+
+func init() {
+	engine, err := xorm.NewEngine("mysql", "root:root@(127.0.0.1:3306)/lql?charset=utf8")
+	if err != nil {
+		log.Fatalf("无法连接数据库%s", err)
+	}
+	engine.Get(entity.TPdf{})
+}
 
 func main() {
 	urls := []string{
