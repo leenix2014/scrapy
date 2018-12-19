@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
 	"log"
 	"net/http"
@@ -11,12 +12,28 @@ import (
 	"strings"
 )
 
+var users = make(map[string]map[string]bool) //map[user_mail][pdf]visited
+var engine *xorm.Engine
+var currentUser = "liquanlin@liquanlin.tech"
+
 func init() {
-	engine, err := xorm.NewEngine("mysql", "root:root@(127.0.0.1:3306)/lql?charset=utf8")
+	var err error
+	engine, err = xorm.NewEngine("mysql", "root:root@(127.0.0.1:3306)/lql?charset=utf8")
 	if err != nil {
 		log.Fatalf("无法连接数据库%s", err)
 	}
-	engine.Get(entity.TPdf{})
+	var dbs []entity.TPdf
+	engine.Table(entity.TPdf{}).Find(&dbs)
+
+	for _, db := range dbs {
+		pdfs, exist := users[db.UserMail]
+		if !exist {
+			pdfs = make(map[string]bool)
+			users[db.UserMail] = pdfs
+		} else {
+			pdfs[db.Url] = db.Visited
+		}
+	}
 }
 
 func main() {
@@ -58,11 +75,16 @@ func getAllPdf(root string) {
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		href, exists := s.Attr("href")
 		if exists && strings.Contains(href, ".pdf") {
+			var key string
+			visited := false
 			if strings.HasPrefix(href, "/") {
-				pdfs[url.Scheme+"://"+url.Host+href] = false
+				key = url.Scheme + "://" + url.Host + href
 			} else {
-				pdfs[url.String()+href] = false
+				key = url.String() + href
 			}
+			pdfs[key] = visited
+			bean := entity.TPdf{UserMail: currentUser, Root: root, Url: key, Visited: visited}
+			engine.Insert(bean)
 		}
 	})
 	for pdf, _ := range pdfs {
