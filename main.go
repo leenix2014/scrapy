@@ -12,7 +12,7 @@ import (
 
 var users = make(map[string]map[string]bool) //map[user_mail][pdf]visited
 var engine *xorm.Engine
-var currentUser = "test@liquanlin.tech"
+var currentUser = "349382785@qq.com"
 
 func init() {
 	loadFromDB()
@@ -55,15 +55,21 @@ func main() {
 	}
 
 	user := users[currentUser]
+	if user == nil {
+		user = make(map[string]bool)
+		users[currentUser] = user
+	}
 	nonVisited := make(map[string]string)
 	for k, root := range allPdfs {
 		visited, exists := user[k]
 		if !exists {
+			//更新数据库
 			bean := entity.TPdf{UserMail: currentUser, Root: root, Url: k, Visited: 0}
 			_, err := engine.InsertOne(bean)
 			if err != nil {
 				log.Printf("插入失败(%v)，Bean(%v)", err, bean)
 			}
+			user[k] = false //更新内存
 		}
 		if !visited {
 			nonVisited[k] = root
