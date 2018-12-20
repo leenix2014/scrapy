@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var from = "test@liquanlin.tech"
+var from = "liquanlin@liquanlin.tech"
 var password = "Leen123"
 var smtpServer = "smtp.exmail.qq.com"
 

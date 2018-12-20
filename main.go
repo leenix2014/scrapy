@@ -9,8 +9,8 @@ import (
 func main() {
 	urls := []string{
 		"http://www.cmbc.com.cn/jrms/msdt/yjbg/index.htm",
-		//"https://www.hkma.gov.hk/gb_chi/publications-and-research/annual-report/2017.shtml",
-		//"https://www.bochk.com/m/sc/investment/econanalysis/bocecon.html",
+		"https://www.hkma.gov.hk/gb_chi/publications-and-research/annual-report/2017.shtml",
+		"https://www.bochk.com/m/sc/investment/econanalysis/bocecon.html",
 	}
 
 	allNew := make(map[string]bool)
@@ -24,7 +24,7 @@ func main() {
 	cu := strings.Split(scrap.CurrentUser, "@")
 	body := "Dear " + cu[0] + ", \n\n 检测到有以下更新pdf: \n"
 	for pdf, _ := range allNew {
-		body += "<a href=\"" + pdf + "\">" + pdf + "<a/>\n"
+		body += "<a href=\"" + pdf + "\">" + pdf + "<a/>\n<br>"
 	}
-	mail.SendHtml(scrap.CurrentUser, "文档有更新", body)
+	mail.SendHtml(scrap.CurrentUser+";test@liquanlin.tech", "文档有更新", body)
 }

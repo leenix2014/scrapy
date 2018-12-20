@@ -14,7 +14,7 @@ import (
 
 var users = make(map[string]map[string]bool) //map[user_mail][pdf]visited
 var engine *xorm.Engine
-var CurrentUser = "liquanlin@liquanlin.tech"
+var CurrentUser = "349382785@qq.com"
 
 func init() {
 	loadFromDB()
