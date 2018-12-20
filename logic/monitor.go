@@ -83,7 +83,7 @@ func Check() {
 	cu := strings.Split(currentUser, "@")
 	body := "Dear " + cu[0] + ", \n\n 检测到有以下更新pdf: \n"
 	for pdf, _ := range nonVisited {
-		body += "<a href=\"" + pdf + "\">" + pdf + "<a/>\n<br>"
+		body += "<a href=\"" + pdf + "\">" + pdf + "<a/>\n<br/><br/>"
 	}
 	err := mail.SendHtml(currentUser+";test@liquanlin.tech", "文档有更新", body)
 	if err != nil {
