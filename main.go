@@ -74,6 +74,9 @@ func main() {
 			nonVisited[k] = root
 		}
 	}
+	if len(nonVisited) == 0 {
+		return
+	}
 
 	cu := strings.Split(currentUser, "@")
 	body := "Dear " + cu[0] + ", \n\n 检测到有以下更新pdf: \n"
