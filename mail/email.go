@@ -10,15 +10,15 @@ var from = "liquanlin@liquanlin.tech"
 var password = "Leen123"
 var smtpServer = "smtp.exmail.qq.com"
 
-func SendPlain(to, subject, body string) {
-	sendMail(to, subject, body, "")
+func SendPlain(to, subject, body string) error {
+	return sendMail(to, subject, body, "")
 }
 
-func SendHtml(to, subject, body string) {
-	sendMail(to, subject, body, "html")
+func SendHtml(to, subject, body string) error {
+	return sendMail(to, subject, body, "html")
 }
 
-func sendMail(to, subject, body, mailType string) {
+func sendMail(to, subject, body, mailType string) error {
 	auth := smtp.PlainAuth("", from, password, smtpServer)
 	var contentType string
 	if mailType == "html" {
@@ -36,4 +36,5 @@ func sendMail(to, subject, body, mailType string) {
 	} else {
 		fmt.Println("发送邮件成功!")
 	}
+	return err
 }
