@@ -2,7 +2,6 @@ package scrap
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
 	"net/http"

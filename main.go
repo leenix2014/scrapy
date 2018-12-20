@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
 	"log"
 	"scrapy/entity"
@@ -27,15 +28,13 @@ func loadFromDB() {
 	//engine.ShowSQL(true)
 	var dbs []entity.TPdf
 	engine.Table(entity.TPdf{}).Find(&dbs)
-
 	for _, db := range dbs {
 		pdfs, exist := users[db.UserMail]
 		if !exist {
 			pdfs = make(map[string]bool)
 			users[db.UserMail] = pdfs
-		} else {
-			pdfs[db.Url] = util.ToBool(db.Visited)
 		}
+		pdfs[db.Url] = util.ToBool(db.Visited)
 	}
 }
 
