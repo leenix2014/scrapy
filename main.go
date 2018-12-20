@@ -6,6 +6,7 @@ import (
 	"scrapy/entity"
 	"scrapy/mail"
 	"scrapy/scrap"
+	"scrapy/util"
 	"strings"
 )
 
@@ -23,6 +24,7 @@ func loadFromDB() {
 	if err != nil {
 		log.Fatalf("无法连接数据库%s", err)
 	}
+	//engine.ShowSQL(true)
 	var dbs []entity.TPdf
 	engine.Table(entity.TPdf{}).Find(&dbs)
 
@@ -32,7 +34,7 @@ func loadFromDB() {
 			pdfs = make(map[string]bool)
 			users[db.UserMail] = pdfs
 		} else {
-			pdfs[db.Url] = db.Visited
+			pdfs[db.Url] = util.ToBool(db.Visited)
 		}
 	}
 }
@@ -57,7 +59,7 @@ func main() {
 	for k, root := range allPdfs {
 		visited, exists := user[k]
 		if !exists {
-			bean := entity.TPdf{UserMail: currentUser, Root: root, Url: k, Visited: false}
+			bean := entity.TPdf{UserMail: currentUser, Root: root, Url: k, Visited: 0}
 			_, err := engine.InsertOne(bean)
 			if err != nil {
 				log.Printf("插入失败(%v)，Bean(%v)", err, bean)
@@ -76,8 +78,8 @@ func main() {
 	err := mail.SendHtml(currentUser+";test@liquanlin.tech", "文档有更新", body)
 	if err == nil {
 		for key, _ := range nonVisited {
-			bean := entity.TPdf{UserMail: currentUser, Url: key, Visited: true}
-			_, err = engine.Update(entity.TPdf{Visited: true}, bean)
+			bean := entity.TPdf{UserMail: currentUser, Url: key}
+			_, err = engine.Update(entity.TPdf{Visited: 1}, bean)
 			if err != nil {
 				log.Printf("更新失败(%v)，Bean(%v)", err, bean)
 			} else {
