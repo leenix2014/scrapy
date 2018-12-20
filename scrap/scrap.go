@@ -9,7 +9,18 @@ import (
 	"strings"
 )
 
-func GetAllPdf(root string) map[string]string {
+func GetAllPdf(urls []string) map[string]string {
+	allPdfs := make(map[string]string)
+	for _, url := range urls {
+		pdfs := getPdf(url)
+		for k, v := range pdfs {
+			allPdfs[k] = v
+		}
+	}
+	return allPdfs
+}
+
+func getPdf(root string) map[string]string {
 	url, _ := url.Parse(root)
 	resp, err := http.Get(root)
 	if err != nil {
