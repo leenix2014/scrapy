@@ -1,7 +1,6 @@
 package mail
 
 import (
-	"fmt"
 	"net/smtp"
 	"strings"
 )
@@ -30,11 +29,5 @@ func sendMail(to, subject, body, mailType string) error {
 	msg := []byte("To: " + to + "\r\nFrom: " + from + "<" + from + ">\r\nSubject: " + subject + "\r\n" + contentType + "\r\n\r\n" + body)
 	sendTos := strings.Split(to, ";")
 	err := smtp.SendMail(smtpServer+":25", auth, from, sendTos, msg)
-	if err != nil {
-		fmt.Println("发送邮件失败!")
-		fmt.Println(err)
-	} else {
-		fmt.Println("发送邮件成功!")
-	}
 	return err
 }
