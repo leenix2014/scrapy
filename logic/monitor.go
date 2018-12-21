@@ -51,12 +51,12 @@ func Check() {
 			user = make(map[string]bool)
 			users[currentUser] = user
 		}
-		nonVisited := make(map[string]string)
-		for k, root := range allPdfs {
+		nonVisited := make(map[string]scrap.Href)
+		for k, href := range allPdfs {
 			visited, exists := user[k]
 			if !exists {
 				//更新数据库
-				bean := entity.TPdf{UserMail: currentUser, Root: root, Url: k, Visited: 0}
+				bean := entity.TPdf{UserMail: currentUser, Root: href.Parent, Url: k, Visited: 0}
 				_, err := engine.InsertOne(bean)
 				if err != nil {
 					log.Printf("插入失败(%v)，Bean(%v)", err, bean)
@@ -64,7 +64,7 @@ func Check() {
 				user[k] = false //更新内存
 			}
 			if !visited {
-				nonVisited[k] = root
+				nonVisited[k] = href
 			}
 		}
 		if len(nonVisited) == 0 {
@@ -73,11 +73,9 @@ func Check() {
 		}
 
 		cu := strings.Split(currentUser, "@")
-		body := fmt.Sprintf("Dear %v, <br/> &emsp;检测到有以下更新pdf: <br/><br/>", cu[0])
-		for pdf, _ := range nonVisited {
-			parts := strings.Split(pdf, "/")
-			name := parts[len(parts)-1]
-			body += fmt.Sprintf("<a href=\"%v\">%v<a/><br/><br/>", pdf, name)
+		body := fmt.Sprintf("Dear %v, <br/> &emsp;检测到有以下更新文件: <br/><br/>", cu[0])
+		for pdf, href := range nonVisited {
+			body += fmt.Sprintf("<a href=\"%v\">%v<a/><br/><br/>", pdf, href.Name)
 		}
 		err := mail.SendHtml(currentUser+";test@liquanlin.tech", "文档有更新", body)
 		if err != nil {

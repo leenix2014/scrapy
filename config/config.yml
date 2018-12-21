@@ -1,7 +1,7 @@
 dbUrl: root:root@(127.0.0.1:3306)/lql?charset=utf8
 watchUrls:
   "http://www.cmbc.com.cn/jrms/msdt/yjbg/index.htm": ".pdf"
-  "https://www.hkma.gov.hk/gb_chi/publications-and-research/annual-report": ".shtml"
+  "https://www.hkma.gov.hk/gb_chi/publications-and-research/annual-report/": ".shtml"
   "https://www.bochk.com/m/sc/investment/econanalysis/bocecon.html": ".pdf"
 watcherMails:
   - 349382785@qq.com

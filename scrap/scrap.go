@@ -9,8 +9,13 @@ import (
 	"strings"
 )
 
-func GetAllPdf(urls map[string]string) map[string]string {
-	allPdfs := make(map[string]string)
+type Href struct {
+	Parent string
+	Name   string
+}
+
+func GetAllPdf(urls map[string]string) map[string]Href {
+	allPdfs := make(map[string]Href)
 	for url, postfix := range urls {
 		pdfs := getPdf(url, postfix)
 		for k, v := range pdfs {
@@ -20,7 +25,7 @@ func GetAllPdf(urls map[string]string) map[string]string {
 	return allPdfs
 }
 
-func getPdf(root string, postfix string) map[string]string {
+func getPdf(root string, postfix string) map[string]Href {
 	url, _ := url.Parse(root)
 	resp, err := http.Get(root)
 	if err != nil {
@@ -41,7 +46,7 @@ func getPdf(root string, postfix string) map[string]string {
 		return nil
 	}
 
-	pdfs := make(map[string]string)
+	pdfs := make(map[string]Href)
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		href, exists := s.Attr("href")
 		if exists && strings.Contains(href, postfix) {
@@ -51,7 +56,8 @@ func getPdf(root string, postfix string) map[string]string {
 			} else {
 				key = url.String() + href
 			}
-			pdfs[key] = root
+			name := s.Text()
+			pdfs[key] = Href{Parent: root, Name: name}
 		}
 	})
 	return pdfs
