@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
 	"github.com/spf13/viper"
@@ -72,9 +73,11 @@ func Check() {
 		}
 
 		cu := strings.Split(currentUser, "@")
-		body := "Dear " + cu[0] + ", \n\n 检测到有以下更新pdf: \n"
+		body := fmt.Sprintf("Dear %v, <br/> &emsp;检测到有以下更新pdf: <br/><br/>", cu[0])
 		for pdf, _ := range nonVisited {
-			body += "<a href=\"" + pdf + "\">" + pdf + "<a/>\n<br/><br/>"
+			parts := strings.Split(pdf, "/")
+			name := parts[len(parts)-1]
+			body += fmt.Sprintf("<a href=\"%v\">%v<a/><br/><br/>", pdf, name)
 		}
 		err := mail.SendHtml(currentUser+";test@liquanlin.tech", "文档有更新", body)
 		if err != nil {
