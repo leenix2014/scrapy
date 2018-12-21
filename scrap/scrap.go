@@ -9,10 +9,10 @@ import (
 	"strings"
 )
 
-func GetAllPdf(urls []string) map[string]string {
+func GetAllPdf(urls map[string]string) map[string]string {
 	allPdfs := make(map[string]string)
-	for _, url := range urls {
-		pdfs := getPdf(url)
+	for url, postfix := range urls {
+		pdfs := getPdf(url, postfix)
 		for k, v := range pdfs {
 			allPdfs[k] = v
 		}
@@ -20,7 +20,7 @@ func GetAllPdf(urls []string) map[string]string {
 	return allPdfs
 }
 
-func getPdf(root string) map[string]string {
+func getPdf(root string, postfix string) map[string]string {
 	url, _ := url.Parse(root)
 	resp, err := http.Get(root)
 	if err != nil {
@@ -44,7 +44,7 @@ func getPdf(root string) map[string]string {
 	pdfs := make(map[string]string)
 	doc.Find("a").Each(func(i int, s *goquery.Selection) {
 		href, exists := s.Attr("href")
-		if exists && strings.Contains(href, ".pdf") {
+		if exists && strings.Contains(href, postfix) {
 			var key string
 			if strings.HasPrefix(href, "/") {
 				key = url.Scheme + "://" + url.Host + href

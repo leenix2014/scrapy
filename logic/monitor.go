@@ -42,7 +42,7 @@ func loadFromDB() {
 
 func Check() {
 	log.Println("开始检查url更新")
-	urls := viper.GetStringSlice("watchUrls")
+	urls := viper.GetStringMapString("watchUrls")
 	allPdfs := scrap.GetAllPdf(urls)
 	currentUsers := viper.GetStringSlice("watcherMails")
 	for _, currentUser := range currentUsers {
