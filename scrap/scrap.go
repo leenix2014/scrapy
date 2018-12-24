@@ -14,6 +14,7 @@ type Href struct {
 	Name   string
 }
 
+// GetAllPdf urls=map[root][postfix], result=map[url][parent, name...]
 func GetAllPdf(urls map[string]string) map[string]Href {
 	allPdfs := make(map[string]Href)
 	for url, postfix := range urls {
@@ -29,7 +30,7 @@ func getPdf(root string, postfix string) map[string]Href {
 	url, _ := url.Parse(root)
 	resp, err := http.Get(root)
 	if err != nil {
-		log.Printf("访问%v失败", root)
+		log.Printf("访问%v失败%v", root, err)
 		return nil
 	}
 	defer resp.Body.Close()
@@ -40,7 +41,7 @@ func getPdf(root string, postfix string) map[string]Href {
 
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		log.Printf("%v文档解析失败", root)
+		log.Printf("%v文档解析失败%v", root, err)
 		body, _ := ioutil.ReadAll(resp.Body)
 		log.Println(string(body))
 		return nil
